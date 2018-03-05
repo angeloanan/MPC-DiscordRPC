@@ -6,8 +6,9 @@
   "author": "angeloanan <anandavid2002@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.18.0",
-    "discord-rich-presence": "^0.0.6"
+    "discord-rich-presence": "^0.0.6",
+    "fancy-log": "^1.3.2",
+    "snekfetch": "^4.0.0-beta.0"
   },
   "devDependencies": {
     "standard": "^11.0.0"
