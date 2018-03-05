@@ -1,0 +1,15 @@
+{
+  "name": "MPC-HC-DiscordRPC",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/angeloanan/MPC-HC-DiscordRPC.git",
+  "author": "angeloanan <anandavid2002@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "discord-rich-presence": "^0.0.6"
+  },
+  "devDependencies": {
+    "standard": "^11.0.0"
+  }
+}
