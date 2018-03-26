@@ -1,4 +1,6 @@
-const log = require('fancy-log')
+const log = require('fancy-log'),
+	jsdom = require('jsdom'),
+	{ JSDOM } = jsdom
 
 log.info('INFO: Loading...')
 
@@ -7,34 +9,37 @@ const events = require('events')
 const snekfetch = require('snekfetch')
 const fs = require('fs')
 
-const config = JSON.parse(fs.readFileSync(`./config.json`, {encoding: 'utf8'}))
+const config = JSON.parse(fs.readFileSync(`./config.json`, {
+	encoding: 'utf8'
+}))
 
 var mediaEmitter = new events.EventEmitter()
 
 if (config.port == null) throw new Error('Port is empty (null)!')
-const uri = `http://localhost:${config.port}`
+const uri = `http://localhost:${config.port}/info.html`
 
 log.info('INFO: Fully ready')
 log.info('INFO: Listening on ' + uri)
 
 mediaEmitter.on('CONNECTED', function (res) {
-  log.warn('CONNECTED ' + res)
+	let { document } = new JSDOM(res.body).window
+	log.warn('CONNECTED ' + document.querySelector('#mpchc_np').textContent)
 })
 
 mediaEmitter.on('ERROR', function (code) {
-  log.error('ERRROR: ' + code)
+	log.error('ERRROR: ' + code)
 })
 
 // Functions
 
-function checkMedia () {
-  snekfetch.get(uri)
-    .then(function (res) {
-      mediaEmitter.emit('CONNECTED', res)
-    })
-    .catch(function (err) {
-      mediaEmitter.emit('ERROR', err.code)
-    })
+function checkMedia() {
+	snekfetch.get(uri)
+		.then(function (res) {
+			mediaEmitter.emit('CONNECTED', res)
+		})
+		.catch(function (err) {
+			mediaEmitter.emit('ERROR', err.code)
+		})
 }
 
 global.intloop = setInterval(checkMedia, 2000)
