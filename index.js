@@ -4,19 +4,25 @@ const log = require('fancy-log'),
 
 log.info('INFO: Loading...')
 
-const client = require('discord-rich-presence')('419528742524813313')
+const client = require('discord-rich-presence')('427863248734388224')
 const events = require('events')
 const snekfetch = require('snekfetch')
 const fs = require('fs')
 
-var status = {
+const data = {
 	mpchcVersion: '',
 	fileName: '',
 	elapsedTime: '',
 	prevElapsedTime: '',
 	totalDuration: '',
 	fileSize: '',
-	paused: true
+	status: 'Idling'
+}
+
+const statusImage = {
+	playing: 'play_small',
+	paused: 'pause_small',
+	idling: 'stop_small'
 }
 
 const config = JSON.parse(fs.readFileSync(`./config.json`, {
@@ -32,29 +38,43 @@ log.info('INFO: Fully ready')
 log.info('INFO: Listening on ' + uri)
 
 mediaEmitter.on('CONNECTED', function (res) {
+	console.log(client)
 	let { document } = new JSDOM(res.body).window,
 		htmlInfo = document.querySelector('#mpchc_np').innerHTML,
 		infoArray = htmlInfo.split(/\s*[•«»/]\s*/)
 
-	status.mpchcVersion = infoArray[1]
-	status.fileName = infoArray[2]
-	status.elapsedTime = infoArray[3]
-	status.totalDuration = infoArray[4]
-	status.fileSize = infoArray[5]
+	data.mpchcVersion = infoArray[1]
+	data.fileName = infoArray[2]
+	data.elapsedTime = infoArray[3]
+	data.totalDuration = infoArray[4]
+	data.fileSize = infoArray[5]
 
-	if (status.elapsedTime == status.prevElapsedTime) status.paused = true;
-	else status.paused = false;
-	
-	status.prevElapsedTime = status.elapsedTime
+	if (data.totalDuration == '00:00:00') {
+		data.fileName = undefined
+		data.elapsedTime = ''
+		data.totalDuration = ''
+		data.status = 'Idling'
+	}
+	else if (data.elapsedTime == data.prevElapsedTime) data.status = 'Paused';
+	else data.status = 'Playing';
+
+	data.prevElapsedTime = data.elapsedTime
+	updatePresence(data);
 	log.warn(
 		'CONNECTED - ' + 
-		(status.paused?'Paused':'Playing') + ' - ' + 
-		status.elapsedTime + ' / ' + status.totalDuration + ' - ' +
-		status.fileName)
+		data.status + ' - ' + 
+		data.elapsedTime + ' / ' + data.totalDuration + ' - ' +
+		data.fileName)
+	
 })
 
 mediaEmitter.on('ERROR', function (code) {
 	log.error('ERRROR: ' + code)
+	process.exit();
+})
+
+mediaEmitter.on('error', e => {
+	log.error('error' + e)
 })
 
 // Functions
@@ -69,7 +89,23 @@ function checkMedia() {
 		})
 }
 
-global.intloop = setInterval(checkMedia, 2000)
+setInterval(checkMedia, 2000)
+
+updatePresence = (data) => {
+	let statusText = (data.status != 'Idling')?
+		(data.elapsedTime + ' / ' + data.totalDuration):
+		data.status
+
+	client.updatePresence({
+		state: statusText,
+		details: data.fileName,
+		largeImageKey: "default",
+		largeImageText: "Media Player Classic: Home Cinema",
+		smallImageKey: statusImage[data.status.toLowerCase()],
+		smallImageText: data.status,
+		instance: true
+	})
+}
 
 // Error Example
 
