@@ -7,4 +7,6 @@ Discord Rich Presence for Media Player Classic - Home Cinema
 2. Clone this repository by running on the terminal: `git clone https://github.com/angeloanan/MPC-HC-DiscordRPC.git`.
 3. Do `npm i` (Yarn user: `yarn install`)
 4. Also do `npm i -g forever` (Yarn user: `yarn global add forever`)
-4. Do `forever start .` and don't close the terminal
+5. Do `forever start .` and close the terminal.
+
+To stop MPC-HC Rich Presence, open the terminal and enter `forever stopall`.
