@@ -9,6 +9,16 @@ const events = require('events')
 const snekfetch = require('snekfetch')
 const fs = require('fs')
 
+var status = {
+	mpchcVersion: '',
+	fileName: '',
+	elapsedTime: '',
+	prevElapsedTime: '',
+	totalDuration: '',
+	fileSize: '',
+	paused: true
+}
+
 const config = JSON.parse(fs.readFileSync(`./config.json`, {
 	encoding: 'utf8'
 }))
@@ -22,8 +32,25 @@ log.info('INFO: Fully ready')
 log.info('INFO: Listening on ' + uri)
 
 mediaEmitter.on('CONNECTED', function (res) {
-	let { document } = new JSDOM(res.body).window
-	log.warn('CONNECTED ' + document.querySelector('#mpchc_np').textContent)
+	let { document } = new JSDOM(res.body).window,
+		htmlInfo = document.querySelector('#mpchc_np').innerHTML,
+		infoArray = htmlInfo.split(/\s*[•«»/]\s*/)
+
+	status.mpchcVersion = infoArray[1]
+	status.fileName = infoArray[2]
+	status.elapsedTime = infoArray[3]
+	status.totalDuration = infoArray[4]
+	status.fileSize = infoArray[5]
+
+	if (status.elapsedTime == status.prevElapsedTime) status.paused = true;
+	else status.paused = false;
+	
+	status.prevElapsedTime = status.elapsedTime
+	log.warn(
+		'CONNECTED - ' + 
+		(status.paused?'Paused':'Playing') + ' - ' + 
+		status.elapsedTime + ' / ' + status.totalDuration + ' - ' +
+		status.fileName)
 })
 
 mediaEmitter.on('ERROR', function (code) {
