@@ -100,7 +100,7 @@ updatePresence = (data) => {
 		state: statusText,
 		details: data.fileName,
 		largeImageKey: "default",
-		largeImageText: "Media Player Classic: Home Cinema",
+		largeImageText: data.mpchcVersion,
 		smallImageKey: statusImage[data.status.toLowerCase()],
 		smallImageText: data.status,
 		instance: true
