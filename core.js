@@ -4,7 +4,7 @@ const DiscordRP = require('discord-rich-presence'),
       jsdom = require('jsdom'),
       { JSDOM } = jsdom
 
-const data = {
+var data = {
     mpchcVersion: '',
     fileName: '',
     elapsedTime: '',
@@ -20,54 +20,65 @@ const statusImage = {
     idling: 'stop_small'
 }
 
-var currentStatus = '';
+var prevStatus = '',
 
 sendPayload = res => {
     var client = new DiscordRP('427863248734388224')
-    let { document } = new JSDOM(res.body).window,
-        htmlInfo = document.querySelector('#mpchc_np').innerHTML,
-        infoArray = htmlInfo.split(/\s*[•«»/]\s*/)
-
+    let elapsedTimeChanged = false,
+        { document } = new JSDOM(res.body).window,
+        infoHtml = document.querySelector('#mpchc_np').innerHTML
+    let infoArray = infoHtml.split(/\s*[•«»/]\s*/)
+    
     data.mpchcVersion = infoArray[1]
-    data.fileName = infoArray[2]
-    data.elapsedTime = infoArray[3]
-    data.totalDuration = infoArray[4]
+    data.fileName = (infoArray[2] == '') ? undefined : infoArray[2]
+    data.elapsedTime = sanitizeTime(infoArray[3])
+    data.totalDuration = sanitizeTime(infoArray[4])
     data.fileSize = infoArray[5]
 
-    if (data.totalDuration == '00:00:00') {
-        data.fileName = undefined
-        data.elapsedTime = ''
-        data.totalDuration = ''
+    var payload = {
+        state: data.totalDuration + ' total',
+        startTimestamp: 0,
+        details: data.fileName,
+        elapsedTime: undefined,
+        largeImageKey: "default",
+        smallImageKey: '',
+        smallImageText: '',
+    }
+
+    if (convert(data.totalDuration) == 0) {
+        payload.details = undefined
+        payload.startTimestamp = undefined
         data.status = 'Idling'
     }
     else if (data.elapsedTime == data.prevElapsedTime) data.status = 'Paused';
-    
-    else data.status = 'Playing';
-
-    data.prevElapsedTime = data.elapsedTime
-    let statusText = (data.status != 'Idling') ?
-        (data.elapsedTime + ' / ' + data.totalDuration) :
-        data.status
-
-    var payload = {
-        //state: statusText,
-        state: data.totalDuration + ' total',
-        startTimestamp: (Date.now() / 1000) - convert(data.elapsedTime),
-        details: data.fileName,
-        largeImageKey: "default",
-        largeImageText: data.mpchcVersion,
-        smallImageKey: statusImage[data.status.toLowerCase()],
-        smallImageText: data.status,
+    else {
+        data.status = 'Playing';
+        payload.startTimestamp = (Date.now() / 1000) - convert(data.elapsedTime)
+        if (convert(data.elapsedTime) != convert(data.prevElapsedTime) + 1) {
+            payload.startTimestamp = (Date.now() / 1000) - convert(data.elapsedTime)
+            elapsedTimeChanged = true
+        }
     }
 
-    if (data.status == 'Paused') payload.startTimestamp = undefined
+    switch (data.status) {
+        case 'Idling':
+            payload.state = data.status
+            break;
+        case 'Paused':
+            payload.state = data.elapsedTime + ' / ' + data.totalDuration
+            break;
+    }
 
-    
-    if (data.status != currentStatus) {
+    payload.smallImageKey = statusImage[data.status.toLowerCase()]
+    payload.smallImageText = data.status
+
+    if (data.status != prevStatus || elapsedTimeChanged) {
         client.updatePresence(payload)
-        log.info('Pacote enviado')
+        log.info('Presence updated')
     }
-    currentStatus = data.status;
+    
+    prevStatus = data.status
+    data.prevElapsedTime = data.elapsedTime 
     log.warn(
         'CONNECTED - ' +
         data.status + ' - ' +
@@ -76,11 +87,18 @@ sendPayload = res => {
 }
 
 convert = (time) => {
-    let parts = time.split(':'),
-        hours = parseInt(parts[0]),
-        minutes = parseInt(parts[1]),
-        seconds = parseInt(parts[2]);
+    let parts = time.split(':');
+        seconds = parseInt(parts[parts.length-1]),
+        minutes = parseInt(parts[parts.length-2]),
+        hours = (parts.length > 2) ? parseInt(parts[0]) : 0
     return ((hours * 60 * 60) + (minutes * 60) + seconds);
+}
+
+sanitizeTime = (time) => {
+    if (time.split(':')[0] == '00') {
+        return time.substr(3, time.length-1)
+    }
+    return time;
 }
 
 module.exports = sendPayload
