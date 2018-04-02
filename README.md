@@ -31,8 +31,8 @@ yarn && yarn global add forever
 
 5. Start the program using: 
 ```sh
-forever start .
+forever start -s .
 ``` 
 Now you can close the terminal.
 
-And voilà! It will now show in your Discord profile what you're watching on MPC-HC. Enjoy.
+And voilà! It will now show in your Discord profile what you're watching/listening to on MPC-HC. Enjoy.

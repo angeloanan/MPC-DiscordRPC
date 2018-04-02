@@ -1,89 +1,91 @@
 const DiscordRP = require('discord-rich-presence'),
+      client = new DiscordRP('427863248734388224'),
       events = require('events'),
       log = require('fancy-log'),
       jsdom = require('jsdom'),
       { JSDOM } = jsdom
 
-var data = {
-    mpchcVersion: '',
-    fileName: '',
-    elapsedTime: '',
-    prevElapsedTime: '',
-    totalDuration: '',
+var playback = {
+    filename: '',
+    position: '',
+    duration: '',
     fileSize: '',
-    status: 'Idling'
+    state: '',
+    prevState: '',
+    prevPosition: '',
 }
 
-const statusImage = {
-    playing: 'play_small',
-    paused: 'pause_small',
-    idling: 'stop_small'
+const states = {
+    '-1': {
+        string: 'Idling',
+        stateKey: 'stop_small'
+    },
+    '0': {
+        string: 'Stopped',
+        stateKey: 'stop_small'
+    },
+    '1': {
+        string: 'Paused',
+        stateKey: 'pause_small'
+    },
+    '2': {
+        string: 'Playing',
+        stateKey: 'play_small'
+    }
 }
-
-var prevStatus = '',
 
 sendPayload = res => {
-    var client = new DiscordRP('427863248734388224')
-    let elapsedTimeChanged = false,
-        { document } = new JSDOM(res.body).window,
-        infoHtml = document.querySelector('#mpchc_np').innerHTML
-    let infoArray = infoHtml.split(/\s*[•«»/]\s*/)
-    
-    data.mpchcVersion = infoArray[1]
-    data.fileName = (infoArray[2] == '') ? undefined : infoArray[2]
-    data.elapsedTime = sanitizeTime(infoArray[3])
-    data.totalDuration = sanitizeTime(infoArray[4])
-    data.fileSize = infoArray[5]
+    var { document } = new JSDOM(res.body).window
+        
+    playback.filename     = document.getElementById('file').textContent
+    playback.state        = document.getElementById('state').textContent
+    playback.duration     = sanitizeTime(document.getElementById('durationstring').textContent)
+    playback.position     = sanitizeTime(document.getElementById('positionstring').textContent)
 
     var payload = {
-        state: data.totalDuration + ' total',
+        state: playback.duration + ' total',
         startTimestamp: 0,
-        details: data.fileName,
-        elapsedTime: undefined,
+        details: playback.filename,
         largeImageKey: "default",
-        smallImageKey: '',
-        smallImageText: '',
+        smallImageKey: states[playback.state].stateKey,
+        smallImageText: states[playback.state].string
     }
 
-    if (convert(data.totalDuration) == 0) {
-        payload.details = undefined
-        payload.startTimestamp = undefined
-        data.status = 'Idling'
-    }
-    else if (data.elapsedTime == data.prevElapsedTime) data.status = 'Paused';
-    else {
-        data.status = 'Playing';
-        payload.startTimestamp = (Date.now() / 1000) - convert(data.elapsedTime)
-        if (convert(data.elapsedTime) != convert(data.prevElapsedTime) + 1) {
-            payload.startTimestamp = (Date.now() / 1000) - convert(data.elapsedTime)
-            elapsedTimeChanged = true
-        }
-    }
-
-    switch (data.status) {
-        case 'Idling':
-            payload.state = data.status
+    switch (playback.state) {
+        case '-1': // Idling
+            payload.state = states[playback.state].string
+            payload.details = undefined
+            payload.startTimestamp = undefined
             break;
-        case 'Paused':
-            payload.state = data.elapsedTime + ' / ' + data.totalDuration
+        case '0': // Stopped
+            payload.startTimestamp = undefined
+            break;
+        case '1': // Paused
+            payload.state = playback.position + ' / ' + playback.duration
+            payload.startTimestamp = undefined
+            break;
+        case '2': // Playing
+            payload.startTimestamp = (Date.now() / 1000) - convert(playback.position)
             break;
     }
 
-    payload.smallImageKey = statusImage[data.status.toLowerCase()]
-    payload.smallImageText = data.status
-
-    if (data.status != prevStatus || elapsedTimeChanged) {
+    if ( (playback.state != playback.prevState) || (
+            playback.state == '2' && 
+            convert(playback.position) != convert(playback.prevPosition) + 1
+        ) ) {
         client.updatePresence(payload)
-        log.info('Presence updated')
+        log.info('Presence updated!')
     }
     
-    prevStatus = data.status
-    data.prevElapsedTime = data.elapsedTime 
+    playback.prevState = playback.state
+    playback.prevPosition = playback.position 
     log.warn(
         'CONNECTED - ' +
-        data.status + ' - ' +
-        data.elapsedTime + ' / ' + data.totalDuration + ' - ' +
-        data.fileName)
+        states[playback.state].string + ' - ' +
+        playback.position + ' / ' + playback.duration + ' - ' +
+        playback.filename)
+    
+    return true
 }
 
 convert = (time) => {

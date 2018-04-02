@@ -11,26 +11,25 @@ const config = JSON.parse(fs.readFileSync(`./config.json`, {
 	encoding: 'utf8'
 }))
 
-var mediaEmitter = new events.EventEmitter()
+var mediaEmitter = new events.EventEmitter(),
+	active = false;
 
 if (config.port == null) throw new Error('Port is empty (null)!')
-const uri = `http://localhost:${config.port}/info.html`
+const uri = `http://localhost:${config.port}/variables.html`
 
 log.info('INFO: Fully ready')
 log.info('INFO: Listening on ' + uri)
 
 mediaEmitter.on('CONNECTED', function (res) {
-	core(res)
+	active = core(res)
 })
 
 mediaEmitter.on('ERROR', function (code) {
-	log.error('ERRROR: ' + code)
-	process.exit();
+	log.error(code)
+	if (active) process.exit();
 })
 
-
 // Functions
-
 function checkMedia() {
 	snekfetch.get(uri)
 		.then(function (res) {
@@ -42,5 +41,3 @@ function checkMedia() {
 }
 
 global.intloop = setInterval(checkMedia, 1000)
-
-
