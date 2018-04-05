@@ -36,3 +36,25 @@ forever start -s .
 Now you can close the terminal.
 
 And voilà! It will now show in your Discord profile what you're watching/listening to on MPC-HC. Enjoy.
+
+## How to update
+
+1. Navigate to the directory where did you cloned / downloaded this project.
+
+2. Stop the program using:
+
+```sh
+forever stop .
+```
+
+3. Update this project by redownloading this project as a .zip file and replacing the old files. Otherwise, if you have Git installed, run:
+```sh
+git pull
+```
+
+4. Start the program again using:
+```sh
+forever start -s .
+```
+
+Now you may close the terminal. The project is fully up to date!
