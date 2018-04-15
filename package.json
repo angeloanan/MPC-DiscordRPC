@@ -1,6 +1,6 @@
 {
   "name": "MPC-HC-DiscordRPC",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "index.js",
   "repository": "https://github.com/angeloanan/MPC-HC-DiscordRPC.git",
   "author": "angeloanan <anandavid2002@gmail.com>",

@@ -34,7 +34,7 @@ const states = {
     }
 }
 
-sendPayload = res => {
+const sendPayload = res => {
     var { document } = new JSDOM(res.body).window
         
     playback.filename     = document.getElementById('file').textContent
@@ -44,7 +44,7 @@ sendPayload = res => {
 
     var payload = {
         state: playback.duration + ' total',
-        startTimestamp: 0,
+        startTimestamp: undefined,
         details: playback.filename,
         largeImageKey: "default",
         smallImageKey: states[playback.state].stateKey,
@@ -55,14 +55,9 @@ sendPayload = res => {
         case '-1': // Idling
             payload.state = states[playback.state].string
             payload.details = undefined
-            payload.startTimestamp = undefined
-            break;
-        case '0': // Stopped
-            payload.startTimestamp = undefined
             break;
         case '1': // Paused
             payload.state = playback.position + ' / ' + playback.duration
-            payload.startTimestamp = undefined
             break;
         case '2': // Playing
             payload.startTimestamp = (Date.now() / 1000) - convert(playback.position)
@@ -79,28 +74,27 @@ sendPayload = res => {
     
     playback.prevState = playback.state
     playback.prevPosition = playback.position 
-    log.warn(
+    log.info(
         'CONNECTED - ' +
         states[playback.state].string + ' - ' +
         playback.position + ' / ' + playback.duration + ' - ' +
         playback.filename)
-    
     return true
 }
 
-convert = (time) => {
-    let parts = time.split(':');
+const convert = time => {
+    let parts = time.split(':'),
         seconds = parseInt(parts[parts.length-1]),
         minutes = parseInt(parts[parts.length-2]),
         hours = (parts.length > 2) ? parseInt(parts[0]) : 0
-    return ((hours * 60 * 60) + (minutes * 60) + seconds);
+    return ((hours * 60 * 60) + (minutes * 60) + seconds)
 }
 
-sanitizeTime = (time) => {
+const sanitizeTime = time => {
     if (time.split(':')[0] == '00') {
         return time.substr(3, time.length-1)
     }
-    return time;
+    return time
 }
 
 module.exports = sendPayload
