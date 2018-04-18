@@ -34,15 +34,15 @@ const states = {
     }
 }
 
-const sendPayload = res => {
-    var { document } = new JSDOM(res.body).window
+const updatePresence = res => {
+    let { document } = new JSDOM(res.body).window
         
     playback.filename     = document.getElementById('file').textContent
     playback.state        = document.getElementById('state').textContent
     playback.duration     = sanitizeTime(document.getElementById('durationstring').textContent)
     playback.position     = sanitizeTime(document.getElementById('positionstring').textContent)
 
-    var payload = {
+    let payload = {
         state: playback.duration + ' total',
         startTimestamp: undefined,
         details: playback.filename,
@@ -69,16 +69,15 @@ const sendPayload = res => {
             convert(playback.position) != convert(playback.prevPosition) + 1
         ) ) {
         client.updatePresence(payload)
-        log.info('Presence updated!')
+        log.info('INFO: Presence update sent:\n' + 
+            'CONNECTED - ' +
+            states[playback.state].string + ' - ' +
+            playback.position + ' / ' + playback.duration + ' - ' +
+            playback.filename)
     }
     
     playback.prevState = playback.state
     playback.prevPosition = playback.position 
-    log.info(
-        'CONNECTED - ' +
-        states[playback.state].string + ' - ' +
-        playback.position + ' / ' + playback.duration + ' - ' +
-        playback.filename)
     return true
 }
 
@@ -97,4 +96,4 @@ const sanitizeTime = time => {
     return time
 }
 
-module.exports = sendPayload
+module.exports = updatePresence

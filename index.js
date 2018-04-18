@@ -11,7 +11,7 @@ const config = JSON.parse(fs.readFileSync(`./config.json`, {
 	encoding: 'utf8'
 }))
 
-var mediaEmitter = new events.EventEmitter(),
+let mediaEmitter = new events.EventEmitter(),
 	active = false;
 
 if (config.port == null) throw new Error('Port is empty (null)!')
@@ -25,8 +25,12 @@ mediaEmitter.on('CONNECTED', function (res) {
 })
 
 mediaEmitter.on('ERROR', function (code) {
-	log.error(code)
+	log.error('ERROR: ' + code)
 	if (active) process.exit();
+})
+
+mediaEmitter.on('error', e => {
+	log.error('ERROR: ' + e)
 })
 
 // Functions
