@@ -1,11 +1,12 @@
+'use strict'
+
 const DiscordRP = require('discord-rich-presence'),
       client = new DiscordRP('427863248734388224'),
-      events = require('events'),
       log = require('fancy-log'),
       jsdom = require('jsdom'),
       { JSDOM } = jsdom
 
-var playback = {
+let playback = {
     filename: '',
     position: '',
     duration: '',
@@ -46,7 +47,7 @@ const updatePresence = res => {
         state: playback.duration + ' total',
         startTimestamp: undefined,
         details: playback.filename,
-        largeImageKey: "default",
+        largeImageKey: 'default',
         smallImageKey: states[playback.state].stateKey,
         smallImageText: states[playback.state].string
     }
@@ -64,16 +65,14 @@ const updatePresence = res => {
             break;
     }
 
-    if ( (playback.state != playback.prevState) || (
-            playback.state == '2' && 
-            convert(playback.position) != convert(playback.prevPosition) + 1
+    if ( (playback.state !== playback.prevState) || (
+            playback.state === '2' && 
+            convert(playback.position) !== convert(playback.prevPosition) + 1
         ) ) {
         client.updatePresence(payload)
         log.info('INFO: Presence update sent:\n' + 
-            'CONNECTED - ' +
-            states[playback.state].string + ' - ' +
-            playback.position + ' / ' + playback.duration + ' - ' +
-            playback.filename)
+            `CONNECTED - ${states[playback.state].string} - ${playback.position} / ${playback.duration} - ${playback.filename}`
+        )
     }
     
     playback.prevState = playback.state
@@ -90,7 +89,7 @@ const convert = time => {
 }
 
 const sanitizeTime = time => {
-    if (time.split(':')[0] == '00') {
+    if (time.split(':')[0] === '00') {
         return time.substr(3, time.length-1)
     }
     return time

@@ -60,3 +60,5 @@ typings/
 # VSCode local settings
 .vscode
 
+# JSHint local settings
+.jshintrc
