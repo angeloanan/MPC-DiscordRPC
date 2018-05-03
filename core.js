@@ -1,10 +1,8 @@
 'use strict'
 
-const DiscordRP = require('discord-rich-presence'),
-      client = new DiscordRP('427863248734388224'),
-      log = require('fancy-log'),
-      jsdom = require('jsdom'),
-      { JSDOM } = jsdom
+const log = require('fancy-log'),
+    jsdom = require('jsdom'),
+    { JSDOM } = jsdom
 
 let playback = {
     filename: '',
@@ -35,13 +33,13 @@ const states = {
     }
 }
 
-const updatePresence = res => {
+const updatePresence = (res, rpc) => {
     let { document } = new JSDOM(res.body).window
-        
-    playback.filename     = document.getElementById('file').textContent
-    playback.state        = document.getElementById('state').textContent
-    playback.duration     = sanitizeTime(document.getElementById('durationstring').textContent)
-    playback.position     = sanitizeTime(document.getElementById('positionstring').textContent)
+
+    playback.filename = document.getElementById('file').textContent
+    playback.state = document.getElementById('state').textContent
+    playback.duration = sanitizeTime(document.getElementById('durationstring').textContent)
+    playback.position = sanitizeTime(document.getElementById('positionstring').textContent)
 
     let payload = {
         state: playback.duration + ' total',
@@ -65,32 +63,32 @@ const updatePresence = res => {
             break;
     }
 
-    if ( (playback.state !== playback.prevState) || (
-            playback.state === '2' && 
-            convert(playback.position) !== convert(playback.prevPosition) + 1
-        ) ) {
-        client.updatePresence(payload)
-        log.info('INFO: Presence update sent:\n' + 
+    if ((playback.state !== playback.prevState) || (
+        playback.state === '2' &&
+        convert(playback.position) !== convert(playback.prevPosition) + 5
+    )) {
+        rpc.setActivity(payload)
+        log.info('INFO: Presence update sent: ' +
             `CONNECTED - ${states[playback.state].string} - ${playback.position} / ${playback.duration} - ${playback.filename}`
         )
     }
-    
+
     playback.prevState = playback.state
-    playback.prevPosition = playback.position 
+    playback.prevPosition = playback.position
     return true
 }
 
 const convert = time => {
     let parts = time.split(':'),
-        seconds = parseInt(parts[parts.length-1]),
-        minutes = parseInt(parts[parts.length-2]),
+        seconds = parseInt(parts[parts.length - 1]),
+        minutes = parseInt(parts[parts.length - 2]),
         hours = (parts.length > 2) ? parseInt(parts[0]) : 0
     return ((hours * 60 * 60) + (minutes * 60) + seconds)
 }
 
 const sanitizeTime = time => {
     if (time.split(':')[0] === '00') {
-        return time.substr(3, time.length-1)
+        return time.substr(3, time.length - 1)
     }
     return time
 }

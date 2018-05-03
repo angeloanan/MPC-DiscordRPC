@@ -5,35 +5,54 @@ const log = require('fancy-log')
 log.info('INFO: Loading...')
 
 const snekfetch = require('snekfetch'),
+	  { Client } = require('discord-rpc'),
 	  core = require('./core'),
 	  events = require('events'),
-	  config = require('./config')
+	  config = require('./config'),
+	  clientID = '427863248734388224'
 
 let mediaEmitter = new events.EventEmitter(),
-	active = false
+	active = false,
+	discordRPCLoop,
+	mpcServerLoop,
+	rpc
 
 if (isNaN(config.port)) {
 	throw new Error('Port is empty or invalid! Please set a valid port number in \'config.js\' file.')
 }
+
 const uri = `http://localhost:${config.port}/variables.html`
 
-log.info('INFO: Fully ready')
-log.info('INFO: Listening on ' + uri)
+log.info('INFO: Fully ready. Trying to connect to Discord client...')
 
 mediaEmitter.on('CONNECTED', res => {
-	if (global.intloop._idleTimeout === 15000) {
-		clearInterval(global.intloop)
-		setInterval(checkMedia, 1000)
+	clearInterval(mpcServerLoop)
+	mpcServerLoop = setInterval(checkMedia, 5000)
+	if (!active) {
+		log.info('INFO: Connected to MPC-HC')
 	}
-	active = core(res)
+	active = core(res, rpc)
 })
 
 mediaEmitter.on('CONN_ERROR', code => {
-	log.error(`ERROR: Unable to connect to Media Player Classic on port ${config.port}. ` + 
-	`Make sure MPC is running, Web Interface is enabled and the port set in 'config.js' file is correct.\n` + code)
+	log.error(`ERROR: Unable to connect to Media Player Classic on port ${config.port}. ` +
+		`Make sure MPC is running, Web Interface is enabled and the port set in 'config.js' file is correct.\n` + code)
 	if (active) {
-		process.exit()
+		process.exit(0)
 	}
+	clearInterval(mpcServerLoop)
+	mpcServerLoop = setInterval(checkMedia, 15000)
+})
+
+mediaEmitter.on('discordConnected', () => {
+	clearInterval(discordRPCLoop)
+	log.info('INFO: Connected to Discord. Listening MPC on ' + uri)
+	checkMedia()
+	mpcServerLoop = setInterval(checkMedia, 15000)
+})
+
+mediaEmitter.on('discordDisconnected', () => {
+	clearInterval(mpcServerLoop)
 })
 
 // Functions
@@ -47,4 +66,33 @@ function checkMedia() {
 		})
 }
 
-global.intloop = setInterval(checkMedia, 15000)
+function initRPC(clientID) {
+	rpc = new Client({ transport: 'ipc' });
+
+	rpc.on('ready', () => {
+		clearInterval(discordRPCLoop)
+		mediaEmitter.emit('discordConnected')
+
+		rpc.transport.once('close', async () => {
+			await destroyRPC();
+			log.error('ERROR: Connection to Discord has closed. Trying again in 10 seconds...');
+			mediaEmitter.emit('discordDisconnected')
+			discordRPCLoop = setInterval(initRPC, 10000, clientID);
+		});
+		//rpc.setActivity(payload);
+	})
+
+	// Log in to the RPC Client, and check whether or not it errors.
+	rpc.login(clientID).catch(error => {
+		log.warn('WARN: Connection to Discord has failed. Trying again in 10 seconds...');
+	})
+}
+
+async function destroyRPC() {
+	if (!rpc) return;
+	await rpc.destroy();
+	rpc = null;
+	log.info('INFO: você destruiu o meu rpc');
+}
+
+discordRPCLoop = setInterval(initRPC, 10000, clientID);

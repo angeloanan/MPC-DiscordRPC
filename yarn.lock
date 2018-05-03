@@ -371,6 +371,13 @@ discord-rich-presence@^0.0.6:
   dependencies:
     discord-rpc "^3.0.0-beta.8"
 
+discord-rpc@^3.0.0-beta.10:
+  version "3.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.0.0-beta.10.tgz#d1178347a4b1e2cc574e206fdb5efc69348af398"
+  dependencies:
+    discord.js "github:discordjs/discord.js"
+    snekfetch "^3.5.8"
+
 discord-rpc@^3.0.0-beta.8:
   version "3.0.0-beta.9"
   resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.0.0-beta.9.tgz#6257ccbb2a7712111b58871e875ef41857812d85"
