@@ -1,10 +1,11 @@
-# MPC-HC-DiscordRPC
-Discord Rich Presence for Media Player Classic - Home Cinema
+# MPC-BE-DiscordRPC
+Discord Rich Presence for Media Player Classic - Black Edition  
+**Disclaimer:** This is a fork of [angeloanan/MPC-HC-DiscordRPC](https://github.com/angeloanan/MPC-HC-DiscordRPC) updated to work with MPC-BE.
 
 ![Media Player Classic Rich Presence on Discord small profile](https://cdn.discordapp.com/attachments/416273308540207116/428741647153758210/unknown.png)
 
 ## How does this work?
-This program simply fetches playback data from MPC-HC Web Interface, makes it look nicer and displays it in your Discord profile through their wonderful [Rich Presence](https://discordapp.com/rich-presence). 
+This program simply fetches playback data from MPC-BE Web Interface, makes it look nicer and displays it in your Discord profile through their wonderful [Rich Presence](https://discordapp.com/rich-presence). 
 
 Please note that it only works with [Discord desktop client](https://discordapp.com/download), not with the website.
 
@@ -15,7 +16,7 @@ Please note that it only works with [Discord desktop client](https://discordapp.
 3. Download this project as a .zip file, extract it and open a terminal window in the project directory. Otherwise, if you have [Git](https://git-scm.com/) installed, run:
 
 ```sh
-git clone https://github.com/angeloanan/MPC-HC-DiscordRPC.git && cd MPC-HC-DiscordRPC
+git clone https://github.com/Der-Eddy/MPC-BE-DiscordRPC && cd MPC-BE-DiscordRPC
 ```
 
 4. Install dependencies using: 
@@ -33,9 +34,13 @@ yarn && yarn global add forever
 ```sh
 forever start -s .
 ``` 
+or via
+```sh
+node index.js
+``` 
 Now you can close the terminal.
 
-And voilà! It will now show in your Discord profile what you're watching/listening to on MPC-HC. Enjoy.
+And voilà! It will now show in your Discord profile what you're watching/listening to on MPC-BE. Enjoy.
 
 ## How to update
 
