@@ -3,19 +3,16 @@
   "version": "0.2.0",
   "main": "index.js",
   "repository": "https://github.com/angeloanan/MPC-HC-DiscordRPC.git",
+  "bugs": "https://github.com/angeloanan/MPC-HC-DiscordRPC/issues",
   "author": "angeloanan <anandavid2002@gmail.com>",
   "contributors": [
     "Lucas Miranda <liddack@outlook.com>"
   ],
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^9.6.6",
     "discord-rpc": "^3.0.0-beta.10",
     "fancy-log": "^1.3.2",
     "jsdom": "^11.6.2",
     "snekfetch": "^4.0.0-beta.0"
-  },
-  "devDependencies": {
-    "standard": "^11.0.0"
   }
 }
