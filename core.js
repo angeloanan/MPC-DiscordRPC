@@ -4,7 +4,7 @@ const log = require('fancy-log'),
       jsdom = require('jsdom'),
       { JSDOM } = jsdom
 
-// Discord Rich Presence have a string length limit of 128 characters.
+// Discord Rich Presence has a string length limit of 128 characters.
 // This little plugin (based on https://stackoverflow.com/a/43006978/7090367)
 // helps by trimming strings up to a given length.
 String.prototype.trimStr = function (length) {
