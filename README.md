@@ -33,6 +33,10 @@ yarn && yarn global add forever
 ```sh
 forever start -s .
 ``` 
+or via
+```sh
+node index.js
+``` 
 Now you can close the terminal.
 
 And voilà! It will now show in your Discord profile what you're watching/listening to on MPC. Enjoy.

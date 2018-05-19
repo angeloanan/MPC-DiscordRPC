@@ -46,7 +46,7 @@ const updatePresence = (res, rpc) => {
     let { document } = new JSDOM(res.body).window
 
     // Gets relevant info from the DOM object.
-    playback.filename = document.getElementById('file').textContent
+    playback.filename = document.getElementById('filepath').textContent.split("\\").pop()
     playback.state = document.getElementById('state').textContent
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent)
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent)
@@ -107,7 +107,7 @@ const convert = time => {
 }
 
 /**
- * In case the given 'hh:mm:ss' formatted time string time is less than 1 hour, 
+ * In case the given 'hh:mm:ss' formatted time string time is less than 1 hour,
  * removes the '00' hours from it.
  * @param {string} time Time string formatted as 'hh:mm:ss'
  * @returns {string} Time string without '00' hours
