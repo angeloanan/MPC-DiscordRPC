@@ -1,12 +1,12 @@
-# MPC-HC-DiscordRPC
-Discord Rich Presence for Media Player Classic - Home Cinema
+# MPC-DiscordRPC
+Discord Rich Presence for Media Player Classic (Home Cinema and Black Edition)
 
 ![Media Player Classic Rich Presence on Discord small profile](https://cdn.discordapp.com/attachments/416273308540207116/428741647153758210/unknown.png)
 
 ## How does this work?
-This program simply fetches playback data from MPC-HC Web Interface, makes it look nicer and displays it in your Discord profile through their wonderful [Rich Presence](https://discordapp.com/rich-presence). 
+This program simply fetches playback data from MPC-HC / MPC-BE Web Interface, and displays it in your Discord profile through their wonderful [Rich Presence](https://discordapp.com/rich-presence) API. 
 
-Please note that it only works with [Discord desktop client](https://discordapp.com/download), not with the website.
+Please note that this only works with [Discord desktop client](https://discordapp.com/download), not with the web app.
 
 ## How to install
 1. Open Media Player Classic, go to `View > Options > Player > Web Interface` and enable `Listen on port:` option. The default port is `13579`, but if you have changed it, please edit the `config.js` file after you download the project.
@@ -35,7 +35,7 @@ forever start -s .
 ``` 
 Now you can close the terminal.
 
-And voilà! It will now show in your Discord profile what you're watching/listening to on MPC-HC. Enjoy.
+And voilà! It will now show in your Discord profile what you're watching/listening to on MPC. Enjoy.
 
 ## How to update
 
