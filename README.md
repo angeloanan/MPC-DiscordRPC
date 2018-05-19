@@ -15,7 +15,7 @@ Please note that this only works with [Discord desktop client](https://discordap
 3. Download this project as a .zip file, extract it and open a terminal window in the project directory. Otherwise, if you have [Git](https://git-scm.com/) installed, run:
 
 ```sh
-git clone https://github.com/angeloanan/MPC-HC-DiscordRPC.git && cd MPC-HC-DiscordRPC
+git clone https://github.com/angeloanan/MPC-DiscordRPC.git && cd MPC-DiscordRPC
 ```
 
 4. Install dependencies using: 
