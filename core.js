@@ -4,6 +4,13 @@ const log = require('fancy-log'),
       jsdom = require('jsdom'),
       { JSDOM } = jsdom
 
+// Discord Rich Presence have a string length limit of 128 characters.
+// This little plugin (based on https://stackoverflow.com/a/43006978/7090367)
+// helps by trimming strings up to a given length.
+String.prototype.trimStr = function (length) {
+    return this.length > length ? this.substring(0, length - 3) + "..." : this
+}
+
 // Defines playback data fetched from MPC.
 let playback = {
     filename: '',
@@ -42,11 +49,14 @@ const states = {
  * @param {RPCClient} rpc Discord Client RPC connection instance
  */
 const updatePresence = (res, rpc) => {
+    // Identifies which MPC fork is running.
+    let mpcFork = res.headers.server.replace(' WebServer', '')
+
     // Gets a DOM object based on MPC Web Interface variables page.
     let { document } = new JSDOM(res.body).window
 
     // Gets relevant info from the DOM object.
-    playback.filename = document.getElementById('filepath').textContent.split("\\").pop()
+    playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128)
     playback.state = document.getElementById('state').textContent
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent)
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent)
@@ -56,7 +66,8 @@ const updatePresence = (res, rpc) => {
         state: playback.duration + ' total',
         startTimestamp: undefined,
         details: playback.filename,
-        largeImageKey: 'default',
+        largeImageKey: mpcFork === 'MPC-BE' ? 'mpcbe_logo' : 'default',
+        largeImageText: mpcFork,
         smallImageKey: states[playback.state].stateKey,
         smallImageText: states[playback.state].string
     }
@@ -82,6 +93,9 @@ const updatePresence = (res, rpc) => {
         convert(playback.position) !== convert(playback.prevPosition) + 5
     )) {
         rpc.setActivity(payload)
+            .catch((err) => {
+                log.error('ERROR: ' + err)
+            })
         log.info('INFO: Presence update sent: ' +
             `${states[playback.state].string} - ${playback.position} / ${playback.duration} - ${playback.filename}`
         )
@@ -107,7 +121,7 @@ const convert = time => {
 }
 
 /**
- * In case the given 'hh:mm:ss' formatted time string time is less than 1 hour,
+ * In case the given 'hh:mm:ss' formatted time string is less than 1 hour, 
  * removes the '00' hours from it.
  * @param {string} time Time string formatted as 'hh:mm:ss'
  * @returns {string} Time string without '00' hours
