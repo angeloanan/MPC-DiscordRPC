@@ -2,8 +2,8 @@
   "name": "MPC-DiscordRPC",
   "version": "0.2.1",
   "main": "index.js",
-  "repository": "https://github.com/angeloanan/MPC-HC-DiscordRPC.git",
-  "bugs": "https://github.com/angeloanan/MPC-HC-DiscordRPC/issues",
+  "repository": "https://github.com/angeloanan/MPC-DiscordRPC.git",
+  "bugs": "https://github.com/angeloanan/MPC-DiscordRPC/issues",
   "author": "angeloanan <anandavid2002@gmail.com>",
   "contributors": [
     "Lucas Miranda <liddack@outlook.com>"
