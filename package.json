@@ -8,10 +8,18 @@
   "contributors": [
     "Lucas Miranda <liddack@outlook.com>"
   ],
+  "os": [
+    "win32"
+  ],
+  "scripts": {
+    "start": "break>%userprofile%\\.forever\\mpc-discordrpc.log && npx forever start --uid mpc-discordrpc -a index.js",
+    "stop": "npx forever stop mpc-discordrpc"
+  },
   "license": "MIT",
   "dependencies": {
     "discord-rpc": "^3.0.0-beta.10",
     "fancy-log": "^1.3.2",
+    "forever": "^0.15.3",
     "jsdom": "^11.6.2",
     "snekfetch": "^4.0.0-beta.0"
   }
