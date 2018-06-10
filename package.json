@@ -12,15 +12,15 @@
     "win32"
   ],
   "scripts": {
-    "start": "break>%userprofile%\\.forever\\mpc-discordrpc.log && npx forever start --uid mpc-discordrpc -a index.js",
-    "stop": "npx forever stop mpc-discordrpc"
+    "start": "del /F /Q /A mpc-discordrpc.log && npx pm2 start -e \\\\.\\NUL -o \\\\.\\NUL --name mpc-discordrpc -l mpc-discordrpc.log --merge-logs index.js",
+    "stop": "npx pm2 delete mpc-discordrpc"
   },
   "license": "MIT",
   "dependencies": {
     "discord-rpc": "^3.0.0-beta.10",
     "fancy-log": "^1.3.2",
-    "forever": "^0.15.3",
     "jsdom": "^11.6.2",
+    "pm2": "^2.10.4",
     "snekfetch": "^4.0.0-beta.0"
   }
 }

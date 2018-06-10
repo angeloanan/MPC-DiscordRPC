@@ -31,6 +31,8 @@ npm i
 yarn
 ```
 
+> Note: You can safely ignore all peer and optional dependencies warnings as they are not required for the program to work.
+
 5. Start the program using: 
 ```sh
 npm start
