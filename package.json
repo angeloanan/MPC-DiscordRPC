@@ -11,8 +11,11 @@
   "os": [
     "win32"
   ],
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "scripts": {
-    "start": "del /F /Q /A mpc-discordrpc.log && npx pm2 start -e \\\\.\\NUL -o \\\\.\\NUL --name mpc-discordrpc -l mpc-discordrpc.log --merge-logs index.js",
+    "start": "del /F /Q /A mpc-discordrpc.log && npx pm2 start pm2.config.js",
     "stop": "npx pm2 delete mpc-discordrpc"
   },
   "license": "MIT",
@@ -20,7 +23,7 @@
     "discord-rpc": "^3.0.0-beta.10",
     "fancy-log": "^1.3.2",
     "jsdom": "^11.6.2",
-    "pm2": "^2.10.4",
+    "pm2": "3.0.0",
     "snekfetch": "^4.0.0-beta.0"
   }
 }

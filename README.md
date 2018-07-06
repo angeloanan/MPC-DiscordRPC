@@ -14,7 +14,8 @@ Please note that this only works with [Discord desktop client](https://discordap
 ![Enable the option "Listen on port"](https://cdn.discordapp.com/attachments/416273308540207116/428748994307424256/unknown.png)
 
 2. Install [`Node.JS`](https://nodejs.org/en/download/current/) (we recommend using the latest version). Optional but better, also install [`Yarn`](https://yarnpkg.com/docs/install).
-3. Download this project as a .zip file, extract it and open a terminal window in the project directory. Otherwise, if you have [Git](https://git-scm.com/) installed, run:
+
+3. [Download this project as a .zip file](https://github.com/angeloanan/MPC-DiscordRPC/archive/master.zip), extract it and open a terminal window in the project directory. Otherwise, if you have [Git](https://git-scm.com/) installed, run:
 
 ```sh
 git clone https://github.com/angeloanan/MPC-DiscordRPC.git && cd MPC-DiscordRPC
