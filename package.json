@@ -1,6 +1,6 @@
 {
   "name": "MPC-DiscordRPC",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "main": "index.js",
   "repository": "https://github.com/angeloanan/MPC-DiscordRPC.git",
   "bugs": "https://github.com/angeloanan/MPC-DiscordRPC/issues",
