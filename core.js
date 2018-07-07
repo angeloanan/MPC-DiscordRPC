@@ -1,15 +1,13 @@
-'use strict'
-
 const log = require('fancy-log'),
-      jsdom = require('jsdom'),
-      { JSDOM } = jsdom
+    jsdom = require('jsdom'),
+    { JSDOM } = jsdom;
 
 // Discord Rich Presence has a string length limit of 128 characters.
 // This little plugin (based on https://stackoverflow.com/a/43006978/7090367)
 // helps by trimming strings up to a given length.
 String.prototype.trimStr = function (length) {
-    return this.length > length ? this.substring(0, length - 3) + "..." : this
-}
+    return this.length > length ? this.substring(0, length - 3) + "..." : this;
+};
 
 // Defines playback data fetched from MPC.
 let playback = {
@@ -20,7 +18,7 @@ let playback = {
     state: '',
     prevState: '',
     prevPosition: '',
-}
+};
 
 // Defines strings and image keys according to the 'state' string
 // provided by MPC.
@@ -41,7 +39,7 @@ const states = {
         string: 'Playing',
         stateKey: 'play_small'
     }
-}
+};
 
 /**
  * Sends Rich Presence updates to Discord client.
@@ -50,16 +48,16 @@ const states = {
  */
 const updatePresence = (res, rpc) => {
     // Identifies which MPC fork is running.
-    let mpcFork = res.headers.server.replace(' WebServer', '')
+    const mpcFork = res.headers.server.replace(' WebServer', '');
 
     // Gets a DOM object based on MPC Web Interface variables page.
-    let { document } = new JSDOM(res.body).window
+    const { document } = new JSDOM(res.body).window;
 
     // Gets relevant info from the DOM object.
-    playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128)
-    playback.state = document.getElementById('state').textContent
-    playback.duration = sanitizeTime(document.getElementById('durationstring').textContent)
-    playback.position = sanitizeTime(document.getElementById('positionstring').textContent)
+    playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
+    playback.state = document.getElementById('state').textContent;
+    playback.duration = sanitizeTime(document.getElementById('durationstring').textContent);
+    playback.position = sanitizeTime(document.getElementById('positionstring').textContent);
 
     // Prepares playback data for Discord Rich Presence.
     let payload = {
@@ -70,19 +68,19 @@ const updatePresence = (res, rpc) => {
         largeImageText: mpcFork,
         smallImageKey: states[playback.state].stateKey,
         smallImageText: states[playback.state].string
-    }
+    };
 
     // Makes changes to payload data according to playback state.
     switch (playback.state) {
         case '-1': // Idling
-            payload.state = states[playback.state].string
-            payload.details = undefined
+            payload.state = states[playback.state].string;
+            payload.details = undefined;
             break;
         case '1': // Paused
-            payload.state = playback.position + ' / ' + playback.duration
+            payload.state = playback.position + ' / ' + playback.duration;
             break;
         case '2': // Playing
-            payload.startTimestamp = (Date.now() / 1000) - convert(playback.position)
+            payload.startTimestamp = (Date.now() / 1000) - convert(playback.position);
             break;
     }
 
@@ -94,18 +92,18 @@ const updatePresence = (res, rpc) => {
     )) {
         rpc.setActivity(payload)
             .catch((err) => {
-                log.error('ERROR: ' + err)
-            })
+                log.error('ERROR: ' + err);
+            });
         log.info('INFO: Presence update sent: ' +
             `${states[playback.state].string} - ${playback.position} / ${playback.duration} - ${playback.filename}`
-        )
+        );
     }
 
     // Replaces previous playback state and position for later comparison.
-    playback.prevState = playback.state
-    playback.prevPosition = playback.position
-    return true
-}
+    playback.prevState = playback.state;
+    playback.prevPosition = playback.position;
+    return true;
+};
 
 /**
  * Simple and quick utility to convert time from 'hh:mm:ss' format to seconds.
@@ -116,9 +114,9 @@ const convert = time => {
     let parts = time.split(':'),
         seconds = parseInt(parts[parts.length - 1]),
         minutes = parseInt(parts[parts.length - 2]),
-        hours = (parts.length > 2) ? parseInt(parts[0]) : 0
-    return ((hours * 60 * 60) + (minutes * 60) + seconds)
-}
+        hours = (parts.length > 2) ? parseInt(parts[0]) : 0;
+    return ((hours * 60 * 60) + (minutes * 60) + seconds);
+};
 
 /**
  * In case the given 'hh:mm:ss' formatted time string is less than 1 hour, 
@@ -128,9 +126,9 @@ const convert = time => {
  */
 const sanitizeTime = time => {
     if (time.split(':')[0] === '00') {
-        return time.substr(3, time.length - 1)
+        return time.substr(3, time.length - 1);
     }
-    return time
-}
+    return time;
+};
 
-module.exports = updatePresence
+module.exports = updatePresence;
