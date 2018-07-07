@@ -15,8 +15,8 @@
     "node": ">=8.3.0"
   },
   "scripts": {
-    "start": "del /F /Q /A mpc-discordrpc.log && npx pm2 start pm2.config.js",
-    "stop": "npx pm2 delete mpc-discordrpc"
+    "start": "del /F /Q mpc-discordrpc.log && pm2 start pm2.config.js",
+    "stop": "pm2 delete mpc-discordrpc"
   },
   "license": "MIT",
   "dependencies": {
