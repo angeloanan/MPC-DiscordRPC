@@ -80,7 +80,7 @@ const updatePresence = (res, rpc) => {
             payload.state = playback.position + ' / ' + playback.duration;
             break;
         case '2': // Playing
-            payload.startTimestamp = (Date.now() / 1000) - convert(playback.position);
+            payload.startTimestamp = Date.now() - convert(playback.position);
             break;
     }
 
@@ -106,16 +106,16 @@ const updatePresence = (res, rpc) => {
 };
 
 /**
- * Simple and quick utility to convert time from 'hh:mm:ss' format to seconds.
+ * Simple and quick utility to convert time from 'hh:mm:ss' format to milliseconds.
  * @param {string} time Time string formatted as 'hh:mm:ss'
- * @returns {number} Number of seconds converted from the given time string
+ * @returns {number} Number of milliseconds converted from the given time string
  */
 const convert = time => {
     let parts = time.split(':'),
         seconds = parseInt(parts[parts.length - 1]),
         minutes = parseInt(parts[parts.length - 2]),
         hours = (parts.length > 2) ? parseInt(parts[0]) : 0;
-    return ((hours * 60 * 60) + (minutes * 60) + seconds);
+    return ((hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
 };
 
 /**
