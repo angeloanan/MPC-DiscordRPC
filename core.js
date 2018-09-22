@@ -1,5 +1,6 @@
 const log = require('fancy-log'),
     jsdom = require('jsdom'),
+    config = require('./config'),
     { JSDOM } = jsdom;
 
 // Discord Rich Presence has a string length limit of 128 characters.
@@ -19,6 +20,8 @@ let playback = {
     prevState: '',
     prevPosition: '',
 };
+
+const ignoreBrackets = config.ignoreBrackets;
 
 // Defines strings and image keys according to the 'state' string
 // provided by MPC.
@@ -55,6 +58,7 @@ const updatePresence = (res, rpc) => {
 
     // Gets relevant info from the DOM object.
     playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
+    if (ignoreBrackets) playback.filename = playback.filename.replace(/ *\[[^)]*\] */g, "").trimStr(128);
     playback.state = document.getElementById('state').textContent;
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent);
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent);
