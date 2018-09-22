@@ -58,7 +58,7 @@ const updatePresence = (res, rpc) => {
 
     // Gets relevant info from the DOM object.
     playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
-    if (ignoreBrackets) playback.filename = playback.filename.replace(/ *\[[^)]*\] */g, "").trimStr(128);
+    if (ignoreBrackets) playback.filename = playback.filename.replace(/ *\[[^\]]*\] */g, "").trimStr(128);
     playback.state = document.getElementById('state').textContent;
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent);
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent);
