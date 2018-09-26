@@ -39,14 +39,16 @@ yarn
 npm start
 ``` 
 or via
+
 ```sh
 node index.js
 ``` 
-Now you can close the terminal.
+
+> Note: Using `npm start` will start the program as a background process so you don't need to keep a terminal window open in order to keep the script running. Thus, you may close your terminal window after running this command.
 
 And voilà! It will now show in your Discord profile what you're watching/listening to on MPC.
 
-If you need MPC-DiscordRPC to stop showing your playback info, just run:
+If you started the program using `npm start` and need MPC-DiscordRPC to stop showing your playback info, just run:
 
 ```
 npm stop
@@ -76,12 +78,12 @@ Now you may close the terminal. The project is fully up to date!
 
 ## `config.js` options
 
-### `exports.port`
+#### `exports.port`
 Default: `13579`
 
 Port on which MPC Web Interface is running. See the `How to install` section above to learn more.
 
-### `exports.ignoreBrackets`
+#### `exports.ignoreBrackets`
 Default: `true`
 
 Whether to omit brackets `[]` and its content in filenames. Useful if you don't want to show on your profile those info tags that usually comes inside brackets in filenames, like `[1080p]`, `[Translator Group Name]`, etc. You can set it to `false` or remove this line to turn off this behavior. 
