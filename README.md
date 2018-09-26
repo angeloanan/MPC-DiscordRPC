@@ -73,3 +73,15 @@ npm start
 ```
 
 Now you may close the terminal. The project is fully up to date!
+
+## `config.js` options
+
+### `exports.port`
+Default: `13579`
+
+Port on which MPC Web Interface is running. See the `How to install` section above to learn more.
+
+### `exports.ignoreBrackets`
+Default: `true`
+
+Whether to omit brackets `[]` and its content in filenames. Useful if you don't want to show on your profile those info tags that usually comes inside brackets in filenames, like `[1080p]`, `[Translator Group Name]`, etc. You can set it to `false` or remove this line to turn off this behavior. 
