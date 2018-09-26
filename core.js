@@ -1,6 +1,6 @@
 const log = require('fancy-log'),
     jsdom = require('jsdom'),
-    config = require('./config'),
+    { ignoreBrackets, showRemainingTime } = require('./config'),
     { JSDOM } = jsdom;
 
 // Discord Rich Presence has a string length limit of 128 characters.
@@ -20,8 +20,6 @@ let playback = {
     prevState: '',
     prevPosition: '',
 };
-
-const ignoreBrackets = config.ignoreBrackets;
 
 // Defines strings and image keys according to the 'state' string
 // provided by MPC.
@@ -58,15 +56,21 @@ const updatePresence = (res, rpc) => {
 
     // Gets relevant info from the DOM object.
     playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
-    if (ignoreBrackets) playback.filename = playback.filename.replace(/ *\[[^\]]*\]/g, "").trimStr(128);
     playback.state = document.getElementById('state').textContent;
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent);
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent);
+
+    // Removes brackets and its content from filename if `ignoreBrackets` option
+    // is set to true
+    if (ignoreBrackets) {
+        playback.filename = playback.filename.replace(/ *\[[^\]]*\]/g, "").trimStr(128);
+    }
 
     // Prepares playback data for Discord Rich Presence.
     let payload = {
         state: playback.duration + ' total',
         startTimestamp: undefined,
+        endTimestamp: undefined,
         details: playback.filename,
         largeImageKey: mpcFork === 'MPC-BE' ? 'mpcbe_logo' : 'default',
         largeImageText: mpcFork,
@@ -84,7 +88,11 @@ const updatePresence = (res, rpc) => {
             payload.state = playback.position + ' / ' + playback.duration;
             break;
         case '2': // Playing
-            payload.startTimestamp = Date.now() - convert(playback.position);
+            if (showRemainingTime) {
+                payload.endTimestamp = Date.now() + (convert(playback.duration) - convert(playback.position));
+            } else {
+                payload.startTimestamp = Date.now() - convert(playback.position);
+            }
             break;
     }
 
