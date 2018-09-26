@@ -92,7 +92,7 @@ const updatePresence = (res, rpc) => {
     // changes while playing.
     if ((playback.state !== playback.prevState) || (
         playback.state === '2' &&
-        convert(playback.position) !== convert(playback.prevPosition) + 5
+        convert(playback.position) !== convert(playback.prevPosition) + 5000
     )) {
         rpc.setActivity(payload)
             .catch((err) => {
