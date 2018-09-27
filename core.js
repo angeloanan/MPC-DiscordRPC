@@ -1,6 +1,6 @@
 const log = require('fancy-log'),
     jsdom = require('jsdom'),
-    { ignoreBrackets, showRemainingTime } = require('./config'),
+    { ignoreBrackets, ignoreFiletype, replaceUnderscore, showRemainingTime } = require('./config'),
     { JSDOM } = jsdom;
 
 // Discord Rich Presence has a string length limit of 128 characters.
@@ -55,16 +55,23 @@ const updatePresence = (res, rpc) => {
     const { document } = new JSDOM(res.body).window;
 
     // Gets relevant info from the DOM object.
-    playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
+    playback.filename = document.getElementById('file').textContent.trimStr(128);
     playback.state = document.getElementById('state').textContent;
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent);
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent);
 
-    // Removes brackets and its content from filename if `ignoreBrackets` option
-    // is set to true
+    // Replaces underscore characters to space characters
+    if (replaceUnderscore) playback.filename = playback.filename.replace(/_/g, " ");
+
+	// Removes brackets and its content from filename if `ignoreBrackets` option
+	// is set to true
     if (ignoreBrackets) {
         playback.filename = playback.filename.replace(/ *\[[^\]]*\]/g, "").trimStr(128);
+        if (playback.filename.substr(0, playback.filename.lastIndexOf(".")).length == 0) playback.filename = document.getElementById('file').textContent.trimStr(128);
     }
+	
+	// Removes filetype from displaying
+	if (ignoreFiletype) playback.filename = playback.filename.substr(0, playback.filename.lastIndexOf("."));
 
     // Prepares playback data for Discord Rich Presence.
     let payload = {
