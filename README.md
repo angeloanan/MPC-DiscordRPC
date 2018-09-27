@@ -88,6 +88,16 @@ Default: `true`
 
 Whether to omit brackets `[]` and its content in filenames. Useful if you don't want to show on your profile those info tags that usually comes inside brackets in filenames, like `[1080p]`, `[Translator Group Name]`, etc. You can set it to `false` or remove this line to turn off this behavior.
 
+#### `exports.ignoreFiletype`
+Default: `false`
+
+Whether to omit filetype. Useful if you don't want to show on your profile the type of the file that is currently open, for example `.mp4`, `.mkv`, `.flac`. You can set it to `true` to turn on this behavior.
+
+#### `exports.replaceUnderscore`
+Default: `true`
+
+Whether to omit replace `_` with space. Useful if you have files like `Your_Favourite_Movie`. You can set it to `false` or remove this line to turn off this behavior.
+
 #### `exports.showRemainingTime`
 Default: `false`
 
