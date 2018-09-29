@@ -55,7 +55,7 @@ const updatePresence = (res, rpc) => {
     const { document } = new JSDOM(res.body).window;
 
     // Gets relevant info from the DOM object.
-    playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
+    let filename = playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
     playback.state = document.getElementById('state').textContent;
     playback.duration = sanitizeTime(document.getElementById('durationstring').textContent);
     playback.position = sanitizeTime(document.getElementById('positionstring').textContent);
@@ -67,7 +67,7 @@ const updatePresence = (res, rpc) => {
 	// is set to true
     if (ignoreBrackets) {
         playback.filename = playback.filename.replace(/ *\[[^\]]*\]/g, "").trimStr(128);
-        if (playback.filename.substr(0, playback.filename.lastIndexOf(".")).length == 0) playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
+        if (playback.filename.substr(0, playback.filename.lastIndexOf(".")).length == 0) playback.filename = filename;
     }
 	
 	// Removes filetype from displaying
