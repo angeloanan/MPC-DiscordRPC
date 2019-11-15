@@ -50,7 +50,7 @@ npm stop
 
 ## How to update
 
-1. Navigate to the directory where did you cloned / downloaded this project.
+1. Navigate to the directory where did you cloned/downloaded this project and open a terminal window.
 
 2. Stop the program using:
 
@@ -58,10 +58,12 @@ npm stop
 npm stop
 ```
 
-3. Update this project by redownloading this project as a .zip file and replacing the old files. Otherwise, if you have Git installed, run:
-```sh
-git pull
-```
+3. Update this project by [redownloading this project as a .zip file](https://github.com/angeloanan/MPC-DiscordRPC/archive/master.zip) and replacing the old files. 
+
+   Otherwise, if you have Git installed, run:
+   ```sh
+   git pull
+   ```
 
 4. Start the program again using:
 ```sh
