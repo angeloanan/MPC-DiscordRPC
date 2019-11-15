@@ -1,6 +1,12 @@
 const log = require('fancy-log'),
     jsdom = require('jsdom'),
-    { ignoreBrackets, ignoreFiletype, replaceUnderscore, showRemainingTime } = require('./config'),
+    { 
+        ignoreBrackets, 
+        ignoreFiletype, 
+        replaceUnderscore, 
+        showRemainingTime,  
+        replaceDots,
+    } = require('./config'),
     { JSDOM } = jsdom;
 
 // Discord Rich Presence has a string length limit of 128 characters.
@@ -70,6 +76,12 @@ const updatePresence = (res, rpc) => {
         if (playback.filename.substr(0, playback.filename.lastIndexOf(".")).length == 0) playback.filename = filename;
     }
 	
+    // Replaces dots in filenames to space characters
+    // Solution found at https://stackoverflow.com/a/28673744
+    if (replaceDots) {
+        playback.filename = playback.filename.replace(/[.](?=.*[.])/g, " ");
+    }
+
 	// Removes filetype from displaying
 	if (ignoreFiletype) playback.filename = playback.filename.substr(0, playback.filename.lastIndexOf("."));
 

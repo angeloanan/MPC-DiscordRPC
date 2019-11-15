@@ -96,7 +96,12 @@ Whether to omit filetype. Useful if you don't want to show on your profile the t
 #### `exports.replaceUnderscore`
 Default: `true`
 
-Whether to omit replace `_` with space. Useful if you have files like `Your_Favourite_Movie`. You can set it to `false` or remove this line to turn off this behavior.
+Whether to replace `_` with space. Useful if you have files like `Your_Favourite_Movie`. You can set it to `false` or remove this line to turn off this behavior.
+
+#### `exports.replaceDots`
+Default: `true`
+
+Whether to replace dot (`.`) characters (except the file extension one) with spaces. This way, `Your.Favourite.Movie.mp4` will be displayed as `Your Favourite Movie.mp4`. You can set it to `false` or remove this line to turn off this behavior.
 
 #### `exports.showRemainingTime`
 Default: `false`
