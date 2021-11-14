@@ -2,7 +2,7 @@ const log = require('fancy-log');
 
 log.info('INFO: Loading...');
 
-const snekfetch = require('snekfetch'),
+const axios = require('axios').default,
 	{ Client } = require('discord-rpc'),
 	updatePresence = require('./core'),
 	events = require('events'),
@@ -72,7 +72,7 @@ mediaEmitter.on('discordDisconnected', () => {
 // Tries to connect to MPC Web Interface and,
 // if connected, fetches its data.
 function checkMPCEndpoint() {
-	snekfetch.get(uri)
+	axios.get(uri)
 		.then(res => {
 			mediaEmitter.emit('CONNECTED', res);
 		})

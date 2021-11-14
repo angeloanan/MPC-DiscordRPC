@@ -50,7 +50,7 @@ const states = {
 
 /**
  * Sends Rich Presence updates to Discord client.
- * @param {SnekfetchResponse} res Response from MPC Web Interface variables page
+ * @param {AxiosResponse} res Response from MPC Web Interface variables page
  * @param {RPCClient} rpc Discord Client RPC connection instance
  */
 const updatePresence = (res, rpc) => {
@@ -58,7 +58,7 @@ const updatePresence = (res, rpc) => {
     const mpcFork = res.headers.server.replace(' WebServer', '');
 
     // Gets a DOM object based on MPC Web Interface variables page.
-    const { document } = new JSDOM(res.body).window;
+    const { document } = new JSDOM(res.data).window;
 
     // Gets relevant info from the DOM object.
     let filename = playback.filename = document.getElementById('filepath').textContent.split("\\").pop().trimStr(128);
