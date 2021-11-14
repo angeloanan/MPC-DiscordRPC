@@ -7,7 +7,7 @@ const axios = require('axios').default,
 	updatePresence = require('./core'),
 	events = require('events'),
 	config = require('./config'),
-	clientID = '427863248734388224';
+	clientId = '427863248734388224';
 
 let mediaEmitter = new events.EventEmitter(),
 	active = false,
@@ -82,7 +82,7 @@ function checkMPCEndpoint() {
 }
 
 // Initiates a new RPC connection to Discord client.
-function initRPC(clientID) {
+function initRPC(clientId) {
 	rpc = new Client({ transport: 'ipc' });
 	rpc.on('ready', () => {
 		clearInterval(discordRPCLoop);
@@ -91,12 +91,12 @@ function initRPC(clientID) {
 			await destroyRPC();
 			log.error('ERROR: Connection to Discord client was closed. Trying again in 10 seconds...');
 			mediaEmitter.emit('discordDisconnected');
-			discordRPCLoop = setInterval(initRPC, 10000, clientID);
+			discordRPCLoop = setInterval(initRPC, 10000, clientId);
 		});
 	});
 
 	// Log in to the RPC server on Discord client, and check whether or not it errors.
-	rpc.login(clientID).catch(() => {
+	rpc.login({ clientId }).catch(() => {
 		log.warn('WARN: Connection to Discord has failed. Trying again in 10 seconds...');
 	});
 }
@@ -110,5 +110,5 @@ async function destroyRPC() {
 
 // Boots the whole script, attempting to connect
 // to Discord client every 10 seconds.
-initRPC(clientID);
-discordRPCLoop = setInterval(initRPC, 10000, clientID);
+initRPC(clientId);
+discordRPCLoop = setInterval(initRPC, 10000, clientId);
