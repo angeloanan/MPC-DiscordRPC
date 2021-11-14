@@ -20,7 +20,7 @@ if (isNaN(config.port)) {
 	throw new Error('Port is empty or invalid! Please set a valid port number in \'config.js\' file.');
 }
 
-const uri = `http://localhost:${config.port}/variables.html`;
+const uri = `http://127.0.0.1:${config.port}/variables.html`;
 
 log.info('INFO: Fully ready. Trying to connect to Discord client...');
 
